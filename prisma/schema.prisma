@@ -8,58 +8,60 @@ datasource db {
 }
 
 model course {
-  crse_code  String   @id @db.VarChar(5)
-  crse_name  String   @db.VarChar(100)
-  offered_by String   @db.VarChar(5)
-  crse_fee   Decimal  @db.Decimal(7, 2)
-  lab_fee    Decimal? @db.Decimal(7, 2)
+  crseCode  String   @id @map("crse_code") @db.VarChar(5)
+  crseName  String   @map("crse_name") @db.VarChar(100)
+  offeredBy String   @map("offered_by") @db.VarChar(5)
+  crseFee   Decimal  @map("crse_fee") @db.Decimal(7, 2)
+  labFee    Decimal? @map("lab_fee") @db.Decimal(7, 2)
 }
 
 model department {
-  dept_code          String    @id @db.VarChar(5)
-  dept_name          String    @db.VarChar(100)
-  hod                String    @db.Char(4)
-  no_of_staff        Int?
-  max_staff_strength Int?
-  budget             Decimal?  @db.Decimal(9, 2)
-  expenditure        Decimal?  @db.Decimal(9, 2)
-  hod_appt_date      DateTime? @db.Date
+  deptCode         String    @id @map("dept_code") @db.VarChar(5)
+  deptName         String    @map("dept_name") @db.VarChar(100)
+  hod              String    @db.Char(4)
+  noOfStaff        Int?      @map("no_of_staff")
+  maxStaffStrength Int?      @map("max_staff_strength")
+  budget           Decimal?  @db.Decimal(9, 2)
+  expenditure      Decimal?  @db.Decimal(9, 2)
+  hodApptDate      DateTime? @map("hod_appt_date") @db.Date
 }
 
 model staff {
-  staff_no            String   @id @db.Char(4)
-  staff_name          String   @db.VarChar(100)
-  supervisor_staff_no String?  @db.Char(4)
-  dob                 DateTime @db.Date
-  grade               String   @db.VarChar(5)
-  marital_status      String   @db.VarChar(1)
-  pay                 Decimal? @db.Decimal(7, 2)
-  allowance           Decimal? @db.Decimal(7, 2)
-  hourly_rate         Decimal? @db.Decimal(7, 2)
-  gender              String   @db.Char(1)
-  citizenship         String   @db.VarChar(10)
-  join_yr             Int
-  dept_code           String   @db.VarChar(5)
-  type_of_employment  String   @db.VarChar(2)
-  highest_qln         String   @db.VarChar(10)
-  designation         String   @db.VarChar(20)
+  staffNo           String   @id @map("staff_no") @db.Char(4)
+  staffName         String   @map("staff_name") @db.VarChar(100)
+  supervisorStaffNo String?  @map("supervisor_staff_no") @db.Char(4)
+  dob               DateTime @db.Date
+  grade             String   @db.VarChar(5)
+  maritalStatus     String   @map("marital_status") @db.VarChar(1)
+  pay               Decimal? @db.Decimal(7, 2)
+  allowance         Decimal? @db.Decimal(7, 2)
+  hourlyRate        Decimal? @map("hourly_rate") @db.Decimal(7, 2)
+  gender            String   @db.Char(1)
+  citizenship       String   @db.VarChar(10)
+  joinYr            Int      @map("join_yr")
+  deptCode          String   @map("dept_code") @db.VarChar(5)
+  typeOfEmployment  String   @map("type_of_employment") @db.VarChar(2)
+  highestQln        String   @map("highest_qln") @db.VarChar(10)
+  designation       String   @db.VarChar(20)
 }
 
-model staff_backup {
-  staff_no           String   @id @db.Char(4)
-  staff_name         String   @db.VarChar(100)
-  supervisor         String?  @db.Char(4)
-  dob                DateTime @db.Date
-  grade              String   @db.VarChar(5)
-  marital_status     String   @db.VarChar(1)
-  pay                Decimal? @db.Decimal(7, 2)
-  allowance          Decimal? @db.Decimal(7, 2)
-  hourly_rate        Decimal? @db.Decimal(7, 2)
-  gender             String   @db.Char(1)
-  citizenship        String   @db.VarChar(10)
-  join_yr            Int
-  dept_code          String   @db.VarChar(5)
-  type_of_employment String   @db.VarChar(2)
-  highest_qln        String   @db.VarChar(10)
-  designation        String   @db.VarChar(20)
+model staffBackup {
+  staffNo          String   @id @map("staff_no") @db.Char(4)
+  staffName        String   @map("staff_name") @db.VarChar(100)
+  supervisor       String?  @db.Char(4)
+  dob              DateTime @db.Date
+  grade            String   @db.VarChar(5)
+  maritalStatus    String   @map("marital_status") @db.VarChar(1)
+  pay              Decimal? @db.Decimal(7, 2)
+  allowance        Decimal? @db.Decimal(7, 2)
+  hourlyRate       Decimal? @map("hourly_rate") @db.Decimal(7, 2)
+  gender           String   @db.Char(1)
+  citizenship      String   @db.VarChar(10)
+  joinYr           Int      @map("join_yr")
+  deptCode         String   @map("dept_code") @db.VarChar(5)
+  typeOfEmployment String   @map("type_of_employment") @db.VarChar(2)
+  highestQln       String   @map("highest_qln") @db.VarChar(10)
+  designation      String   @db.VarChar(20)
+
+  @@map("staff_backup")
 }

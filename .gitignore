@@ -1,2 +1,9 @@
-node_modules
+# Ignore .env file
 .env
+
+# Node modules
+node_modules/
+
+# Other files or directories to ignore
+.DS_Store
+*.log

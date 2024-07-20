@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model course {
+  crse_code  String   @id @db.VarChar(5)
+  crse_name  String   @db.VarChar(100)
+  offered_by String   @db.VarChar(5)
+  crse_fee   Decimal  @db.Decimal(7, 2)
+  lab_fee    Decimal? @db.Decimal(7, 2)
+}
+
+model department {
+  dept_code          String    @id @db.VarChar(5)
+  dept_name          String    @db.VarChar(100)
+  hod                String    @db.Char(4)
+  no_of_staff        Int?
+  max_staff_strength Int?
+  budget             Decimal?  @db.Decimal(9, 2)
+  expenditure        Decimal?  @db.Decimal(9, 2)
+  hod_appt_date      DateTime? @db.Date
+}
+
+model staff {
+  staff_no            String   @id @db.Char(4)
+  staff_name          String   @db.VarChar(100)
+  supervisor_staff_no String?  @db.Char(4)
+  dob                 DateTime @db.Date
+  grade               String   @db.VarChar(5)
+  marital_status      String   @db.VarChar(1)
+  pay                 Decimal? @db.Decimal(7, 2)
+  allowance           Decimal? @db.Decimal(7, 2)
+  hourly_rate         Decimal? @db.Decimal(7, 2)
+  gender              String   @db.Char(1)
+  citizenship         String   @db.VarChar(10)
+  join_yr             Int
+  dept_code           String   @db.VarChar(5)
+  type_of_employment  String   @db.VarChar(2)
+  highest_qln         String   @db.VarChar(10)
+  designation         String   @db.VarChar(20)
+}
+
+model staff_backup {
+  staff_no           String   @id @db.Char(4)
+  staff_name         String   @db.VarChar(100)
+  supervisor         String?  @db.Char(4)
+  dob                DateTime @db.Date
+  grade              String   @db.VarChar(5)
+  marital_status     String   @db.VarChar(1)
+  pay                Decimal? @db.Decimal(7, 2)
+  allowance          Decimal? @db.Decimal(7, 2)
+  hourly_rate        Decimal? @db.Decimal(7, 2)
+  gender             String   @db.Char(1)
+  citizenship        String   @db.VarChar(10)
+  join_yr            Int
+  dept_code          String   @db.VarChar(5)
+  type_of_employment String   @db.VarChar(2)
+  highest_qln        String   @db.VarChar(10)
+  designation        String   @db.VarChar(20)
+}

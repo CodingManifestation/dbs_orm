@@ -1,0 +1,21 @@
+.deadline {
+    font-weight: bold;
+    color: red;
+}
+
+h3 {
+    text-decoration: underline;
+}
+
+.fulfill-with-ca1 {
+    font-weight: bold;
+    color: blue;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

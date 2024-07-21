@@ -1,67 +1,150 @@
 generator client {
-  provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["postgresqlExtensions", "relationJoins"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model country {
+    countryName String    @id @map("country_name") @db.VarChar(30)
+    language    String    @db.VarChar(30)
+    region      String    @db.VarChar(30)
+    student     student[]
 }
 
 model course {
-  crseCode  String   @id @map("crse_code") @db.VarChar(5)
-  crseName  String   @map("crse_name") @db.VarChar(100)
-  offeredBy String   @map("offered_by") @db.VarChar(5)
-  crseFee   Decimal  @map("crse_fee") @db.Decimal(7, 2)
-  labFee    Decimal? @map("lab_fee") @db.Decimal(7, 2)
+    crseCode  String   @id @map("crse_code") @db.VarChar(5)
+    crseName  String   @map("crse_name") @db.VarChar(100)
+    offeredBy String   @map("offered_by") @db.VarChar(5)
+    crseFee   Decimal  @map("crse_fee") @db.Decimal(7, 2)
+    labFee    Decimal? @map("lab_fee") @db.Decimal(7, 2)
+
+    department department @relation(fields: [offeredBy], references: [deptCode], onDelete: NoAction, onUpdate: NoAction, map: "course_offered_by_fk")
+    student    student[]
 }
 
 model department {
-  deptCode         String    @id @map("dept_code") @db.VarChar(5)
-  deptName         String    @map("dept_name") @db.VarChar(100)
-  hod              String    @db.Char(4)
-  noOfStaff        Int?      @map("no_of_staff")
-  maxStaffStrength Int?      @map("max_staff_strength")
-  budget           Decimal?  @db.Decimal(9, 2)
-  expenditure      Decimal?  @db.Decimal(9, 2)
-  hodApptDate      DateTime? @map("hod_appt_date") @db.Date
+    deptCode         String    @id @map("dept_code") @db.VarChar(5)
+    deptName         String    @map("dept_name") @db.VarChar(100)
+    hod              String    @db.Char(4)
+    noOfStaff        Int?      @map("no_of_staff")
+    maxStaffStrength Int?      @map("max_staff_strength")
+    budget           Decimal?  @db.Decimal(9, 2)
+    expenditure      Decimal?  @db.Decimal(9, 2)
+    hodApptDate      DateTime? @map("hod_appt_date") @db.Date
+
+    course                    course[]
+    departmentHodToStaff      staff    @relation("departmentHodToStaff", fields: [hod], references: [staffNo], onDelete: NoAction, onUpdate: NoAction, map: "dept_hod_fk")
+    staffDeptCodeToDepartment staff[]  @relation("staffDeptCodeToDepartment")
+}
+
+model module {
+    modCode    String  @id @map("mod_code") @db.VarChar(10)
+    modName    String  @map("mod_name") @db.VarChar(100)
+    creditUnit Int     @map("credit_unit")
+    modCoord   String? @map("mod_coord") @db.Char(4)
+
+    staff                         staff?               @relation(fields: [modCoord], references: [staffNo], onDelete: NoAction, onUpdate: NoAction, map: "mod_mod_coord_fk")
+    preRequisiteModCodeToModule   preRequisite[]       @relation("preRequisiteModCodeToModule")
+    preRequisiteRequisiteToModule preRequisite[]       @relation("preRequisiteRequisiteToModule")
+    studModPerformance            studModPerformance[]
+}
+
+model preRequisite {
+    modCode   String @map("mod_code") @db.VarChar(10)
+    requisite String @db.VarChar(10)
+
+    preRequisiteModCodeToModule   module @relation("preRequisiteModCodeToModule", fields: [modCode], references: [modCode], onDelete: NoAction, onUpdate: NoAction, map: "pre_requisite_mod_code_fk")
+    preRequisiteRequisiteToModule module @relation("preRequisiteRequisiteToModule", fields: [requisite], references: [modCode], onDelete: NoAction, onUpdate: NoAction, map: "pre_requisite_requisite_fk")
+
+    @@id([modCode, requisite])
+    @@map("pre_requisite")
 }
 
 model staff {
-  staffNo           String   @id @map("staff_no") @db.Char(4)
-  staffName         String   @map("staff_name") @db.VarChar(100)
-  supervisorStaffNo String?  @map("supervisor_staff_no") @db.Char(4)
-  dob               DateTime @db.Date
-  grade             String   @db.VarChar(5)
-  maritalStatus     String   @map("marital_status") @db.VarChar(1)
-  pay               Decimal? @db.Decimal(7, 2)
-  allowance         Decimal? @db.Decimal(7, 2)
-  hourlyRate        Decimal? @map("hourly_rate") @db.Decimal(7, 2)
-  gender            String   @db.Char(1)
-  citizenship       String   @db.VarChar(10)
-  joinYr            Int      @map("join_yr")
-  deptCode          String   @map("dept_code") @db.VarChar(5)
-  typeOfEmployment  String   @map("type_of_employment") @db.VarChar(2)
-  highestQln        String   @map("highest_qln") @db.VarChar(10)
-  designation       String   @db.VarChar(20)
+    staffNo           String   @id @map("staff_no") @db.Char(4)
+    staffName         String   @map("staff_name") @db.VarChar(100)
+    supervisorStaffNo String?  @map("supervisor_staff_no") @db.Char(4)
+    dob               DateTime @db.Date
+    grade             String   @db.VarChar(5)
+    maritalStatus     String   @map("marital_status") @db.VarChar(1)
+    pay               Decimal? @db.Decimal(7, 2)
+    allowance         Decimal? @db.Decimal(7, 2)
+    hourlyRate        Decimal? @map("hourly_rate") @db.Decimal(7, 2)
+    gender            String   @db.Char(1)
+    citizenship       String   @db.VarChar(10)
+    joinYr            Int      @map("join_yr")
+    deptCode          String   @map("dept_code") @db.VarChar(5)
+    typeOfEmployment  String   @map("type_of_employment") @db.VarChar(2)
+    highestQln        String   @map("highest_qln") @db.VarChar(10)
+    designation       String   @db.VarChar(20)
+
+    departmentHodTostaff      department[]     @relation("departmentHodToStaff")
+    module                    module[]
+    staffDeptCodeToDepartment department       @relation("staffDeptCodeToDepartment", fields: [deptCode], references: [deptCode], onDelete: NoAction, onUpdate: NoAction, map: "staff_dept_code_fk")
+    staffDependent            staffDependent[]
 }
 
 model staffBackup {
-  staffNo          String   @id @map("staff_no") @db.Char(4)
-  staffName        String   @map("staff_name") @db.VarChar(100)
-  supervisor       String?  @db.Char(4)
-  dob              DateTime @db.Date
-  grade            String   @db.VarChar(5)
-  maritalStatus    String   @map("marital_status") @db.VarChar(1)
-  pay              Decimal? @db.Decimal(7, 2)
-  allowance        Decimal? @db.Decimal(7, 2)
-  hourlyRate       Decimal? @map("hourly_rate") @db.Decimal(7, 2)
-  gender           String   @db.Char(1)
-  citizenship      String   @db.VarChar(10)
-  joinYr           Int      @map("join_yr")
-  deptCode         String   @map("dept_code") @db.VarChar(5)
-  typeOfEmployment String   @map("type_of_employment") @db.VarChar(2)
-  highestQln       String   @map("highest_qln") @db.VarChar(10)
-  designation      String   @db.VarChar(20)
+    staffNo          String   @id @map("staff_no") @db.Char(4)
+    staffName        String   @map("staff_name") @db.VarChar(100)
+    supervisor       String?  @db.Char(4)
+    dob              DateTime @db.Date
+    grade            String   @db.VarChar(5)
+    maritalStatus    String   @map("marital_status") @db.VarChar(1)
+    pay              Decimal? @db.Decimal(7, 2)
+    allowance        Decimal? @db.Decimal(7, 2)
+    hourlyRate       Decimal? @map("hourly_rate") @db.Decimal(7, 2)
+    gender           String   @db.Char(1)
+    citizenship      String   @db.VarChar(10)
+    joinYr           Int      @map("join_yr")
+    deptCode         String   @map("dept_code") @db.VarChar(5)
+    typeOfEmployment String   @map("type_of_employment") @db.VarChar(2)
+    highestQln       String   @map("highest_qln") @db.VarChar(10)
+    designation      String   @db.VarChar(20)
 
-  @@map("staff_backup")
+    @@map("staff_backup")
+}
+
+model staffDependent {
+    staffNo       String @map("staff_no") @db.Char(4)
+    dependentName String @map("dependent_name") @db.VarChar(30)
+    relationship  String @db.VarChar(20)
+
+    staff staff @relation(fields: [staffNo], references: [staffNo], onDelete: NoAction, onUpdate: NoAction, map: "staff_dependent_staff_no_fk")
+
+    @@id([staffNo, dependentName])
+    @@map("staff_dependent")
+}
+
+model studModPerformance {
+    admNo         String  @map("adm_no") @db.Char(4)
+    modRegistered String  @map("mod_registered") @db.VarChar(10)
+    mark          Int?
+    grade         String? @db.Char(2)
+
+    student student @relation(fields: [admNo], references: [admNo], onDelete: NoAction, onUpdate: NoAction)
+    module  module  @relation(fields: [modRegistered], references: [modCode], onDelete: NoAction, onUpdate: NoAction)
+
+    @@id([admNo, modRegistered])
+    @@map("stud_mod_performance")
+}
+
+model student {
+    admNo       String   @id @map("adm_no") @db.Char(4)
+    studName    String   @map("stud_name") @db.VarChar(30)
+    gender      String   @db.Char(1)
+    address     String   @db.VarChar(100)
+    mobilePhone String?  @map("mobile_phone") @db.Char(8)
+    homePhone   String?  @map("home_phone") @db.Char(8)
+    dob         DateTime @db.Date
+    nationality String   @db.VarChar(30)
+    crseCode    String   @map("crse_code") @db.VarChar(5)
+
+    studModPerformance studModPerformance[]
+    course             course               @relation(fields: [crseCode], references: [crseCode], onDelete: NoAction, onUpdate: NoAction, map: "student_crse_code_fk")
+    country            country              @relation(fields: [nationality], references: [countryName], onDelete: NoAction, onUpdate: NoAction, map: "student_nationality_fk")
 }
